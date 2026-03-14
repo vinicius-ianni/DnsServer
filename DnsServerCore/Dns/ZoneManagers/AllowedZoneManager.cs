@@ -1,6 +1,6 @@
 ﻿/*
 Technitium DNS Server
-Copyright (C) 2025  Shreyas Zare (shreyas@technitium.com)
+Copyright (C) 2026  Shreyas Zare (shreyas@technitium.com)
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -41,7 +41,7 @@ namespace DnsServerCore.Dns.ZoneManagers
         readonly DnsSOARecordDataExtended _soaRecord;
         readonly DnsNSRecordDataExtended _nsRecord;
 
-        readonly object _saveLock = new object();
+        readonly Lock _saveLock = new Lock();
         bool _pendingSave;
         readonly Timer _saveTimer;
         const int SAVE_TIMER_INITIAL_INTERVAL = 5000;
@@ -162,12 +162,15 @@ namespace DnsServerCore.Dns.ZoneManagers
 
         private void SaveZoneFileInternal()
         {
+            string tmpAllowedZoneFile = Path.Combine(_dnsServer.ConfigFolder, "allowed.tmp");
             string allowedZoneFile = Path.Combine(_dnsServer.ConfigFolder, "allowed.config");
 
-            using (FileStream fS = new FileStream(allowedZoneFile, FileMode.Create, FileAccess.Write))
+            using (FileStream fS = new FileStream(tmpAllowedZoneFile, FileMode.Create, FileAccess.Write))
             {
                 WriteConfigTo(fS);
             }
+
+            File.Move(tmpAllowedZoneFile, allowedZoneFile, true);
 
             _dnsServer.LogManager.Write("DNS Server allowed zone file was saved: " + allowedZoneFile);
         }
