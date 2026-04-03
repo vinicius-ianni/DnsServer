@@ -338,3 +338,21 @@ function cleanTextList(text) {
 
     return text;
 }
+
+function getCookie(name) {
+    name = name + "=";
+    var cookieParts = document.cookie.split(';');
+
+    for (var i = 0; i < cookieParts.length; i++) {
+        var c = cookieParts[i].trimStart();
+
+        if (c.indexOf(name) == 0)
+            return c.substring(name.length, c.length);
+    }
+
+    return null;
+}
+
+function setCookie(name, value, maxAge) {
+    document.cookie = name + "=" + value + ";Max-Age=" + maxAge + ";path=/";
+}
