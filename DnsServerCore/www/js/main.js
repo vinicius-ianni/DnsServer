@@ -44,12 +44,36 @@ function showPageLogin() {
         clearInterval(refreshTimerHandle);
         refreshTimerHandle = null;
     }
+
+    HTTPRequest({
+        url: "api/sso/status",
+        success: function (responseJSON) {
+            if (responseJSON.ssoEnabled)
+                $("#divLoginSso").show();
+            else
+                $("#divLoginSso").hide();
+        }
+    });
 }
 
 function showPageMain() {
     hideAlert();
 
+    $("#txtUser").val("");
+    $("#txtPass").val("");
+    $("#txt2FATOTP").val("");
+
     $("#pageLogin").hide();
+
+    if (sessionData.isSsoUser) {
+        $("#mnuUserChangePassword").hide();
+        $("#mnuUserConfigure2FA").hide();
+    }
+    else {
+        $("#mnuUserChangePassword").show();
+        $("#mnuUserConfigure2FA").show();
+    }
+
     $("#mnuUser").show();
 
     $(".nav-tabs li").removeClass("active");
@@ -855,9 +879,9 @@ function refreshDnsSettings() {
                 }
 
                 //buttons
-                $("#btnSettingsFlushCache").hide();
-                $("#btnShowBackupSettingsModal").hide();
-                $("#btnShowRestoreSettingsModal").hide();
+                $("#btnSettingsFlushCache").prop("disabled", true);
+                $("#btnShowBackupSettingsModal").prop("disabled", true);
+                $("#btnShowRestoreSettingsModal").prop("disabled", true);
             }
             else if (node != "") {
                 //node view
@@ -930,9 +954,9 @@ function refreshDnsSettings() {
                 $("#settingsTabListLogging").show();
 
                 //buttons
-                $("#btnSettingsFlushCache").show();
-                $("#btnShowBackupSettingsModal").show();
-                $("#btnShowRestoreSettingsModal").show();
+                $("#btnSettingsFlushCache").prop("disabled", false);
+                $("#btnShowBackupSettingsModal").prop("disabled", false);
+                $("#btnShowRestoreSettingsModal").prop("disabled", false);
             }
             else {
                 //clustering disabled
@@ -973,9 +997,9 @@ function refreshDnsSettings() {
                 $("#settingsTabListLogging").show();
 
                 //buttons
-                $("#btnSettingsFlushCache").show();
-                $("#btnShowBackupSettingsModal").show();
-                $("#btnShowRestoreSettingsModal").show();
+                $("#btnSettingsFlushCache").prop("disabled", false);
+                $("#btnShowBackupSettingsModal").prop("disabled", false);
+                $("#btnShowRestoreSettingsModal").prop("disabled", false);
             }
 
             divDnsSettingsLoader.hide();
