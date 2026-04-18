@@ -656,7 +656,7 @@ SELECT
     answer
 FROM
     dns_logs
-" + (string.IsNullOrEmpty(whereClause) ? "" : "WHERE " + whereClause + " ") + @"
+" + (string.IsNullOrEmpty(whereClause) ? "" : "WHERE " + whereClause) + @"
 ORDER BY dlid" + (descendingOrder ? " DESC" : "") + @"
 LIMIT @limit OFFSET @offset";
 
