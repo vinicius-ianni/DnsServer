@@ -1159,8 +1159,9 @@ function showImportZoneModal(zone) {
     $("#divImportZoneAlert").html("");
 
     $("#rdImportZoneTypeFile").prop("checked", true);
-    $("#chkImportZoneOverwrite").prop("checked", true)
-    $("#chkImportZoneOverwriteSoaSerial").prop("checked", false)
+    $("#chkImportZoneOverwrite").prop("checked", true);
+    $("#chkImportZoneOverwriteZone").prop("checked", false);
+    $("#chkImportZoneOverwriteSoaSerial").prop("checked", false);
 
     $("#divImportZoneFile").show();
     $("#fileImportZone").val("");
@@ -1183,6 +1184,7 @@ function importZone() {
     var zone = $("#lblImportZoneName").text();
     var importType = $("input[name=rdImportZoneType]:checked").val();
     var overwrite = $("#chkImportZoneOverwrite").prop("checked");
+    var overwriteZone = $("#chkImportZoneOverwriteZone").prop("checked");
     var overwriteSoaSerial = $("#chkImportZoneOverwriteSoaSerial").prop("checked");
 
     var formData;
@@ -1215,7 +1217,7 @@ function importZone() {
     btn.button("loading");
 
     HTTPRequest({
-        url: "api/zones/import?zone=" + encodeURIComponent(zone) + "&overwrite=" + overwrite + "&overwriteSoaSerial=" + overwriteSoaSerial + "&node=" + encodeURIComponent(node),
+        url: "api/zones/import?zone=" + encodeURIComponent(zone) + "&overwrite=" + overwrite + "&overwriteZone=" + overwriteZone + "&overwriteSoaSerial=" + overwriteSoaSerial + "&node=" + encodeURIComponent(node),
         token: sessionData.token,
         method: "POST",
         data: formData,
