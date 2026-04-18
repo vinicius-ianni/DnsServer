@@ -574,7 +574,7 @@ namespace DnsServerCore
 
             DateTime logStartDateTime = _useLocalTime ? DateTime.Now : DateTime.UtcNow;
 
-            _logFile = Path.Combine(logFolder, logStartDateTime.ToString(LOG_FILE_DATE_TIME_FORMAT) + ".log");
+            _logFile = Path.Combine(logFolder, logStartDateTime.ToString(LOG_FILE_DATE_TIME_FORMAT, CultureInfo.InvariantCulture) + ".log");
             _logWriter = new StreamWriter(new FileStream(_logFile, FileMode.Append, FileAccess.Write, FileShare.Read));
             _logDate = logStartDateTime.Date;
 
@@ -599,16 +599,16 @@ namespace DnsServerCore
             if (_useLocalTime)
             {
                 if (dateTime.Kind == DateTimeKind.Local)
-                    logEntry = "[" + dateTime.ToString(LOG_ENTRY_DATE_TIME_FORMAT) + " Local] " + message;
+                    logEntry = "[" + dateTime.ToString(LOG_ENTRY_DATE_TIME_FORMAT, CultureInfo.InvariantCulture) + " Local] " + message;
                 else
-                    logEntry = "[" + dateTime.ToLocalTime().ToString(LOG_ENTRY_DATE_TIME_FORMAT) + " Local] " + message;
+                    logEntry = "[" + dateTime.ToLocalTime().ToString(LOG_ENTRY_DATE_TIME_FORMAT, CultureInfo.InvariantCulture) + " Local] " + message;
             }
             else
             {
                 if (dateTime.Kind == DateTimeKind.Utc)
-                    logEntry = "[" + dateTime.ToString(LOG_ENTRY_DATE_TIME_FORMAT) + " UTC] " + message;
+                    logEntry = "[" + dateTime.ToString(LOG_ENTRY_DATE_TIME_FORMAT, CultureInfo.InvariantCulture) + " UTC] " + message;
                 else
-                    logEntry = "[" + dateTime.ToUniversalTime().ToString(LOG_ENTRY_DATE_TIME_FORMAT) + " UTC] " + message;
+                    logEntry = "[" + dateTime.ToUniversalTime().ToString(LOG_ENTRY_DATE_TIME_FORMAT, CultureInfo.InvariantCulture) + " UTC] " + message;
             }
 
             return logEntry;
