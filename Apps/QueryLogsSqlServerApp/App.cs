@@ -38,6 +38,8 @@ namespace QueryLogsSqlServer
     {
         #region variables
 
+        readonly static JsonDocumentOptions _jsonParseOptions = new JsonDocumentOptions() { CommentHandling = JsonCommentHandling.Skip };
+
         IDnsServer? _dnsServer;
 
         bool _enableLogging;
@@ -326,13 +328,16 @@ namespace QueryLogsSqlServer
 
         #region public
 
-        public async Task InitializeAsync(IDnsServer dnsServer, string config)
+        public async Task InitializeAsync(IDnsServer dnsServer, string? config)
         {
             try
             {
                 _dnsServer = dnsServer;
 
-                using JsonDocument jsonDocument = JsonDocument.Parse(config);
+                if (config is null)
+                    throw new InvalidOperationException();
+
+                using JsonDocument jsonDocument = JsonDocument.Parse(config, _jsonParseOptions);
                 JsonElement jsonConfig = jsonDocument.RootElement;
 
                 bool enableLogging = jsonConfig.GetPropertyValue("enableLogging", false);
@@ -572,7 +577,7 @@ END
             return Task.CompletedTask;
         }
 
-        public async Task<DnsLogPage> QueryLogsAsync(long pageNumber, int entriesPerPage, bool descendingOrder, DateTime? start, DateTime? end, IPAddress clientIpAddress, DnsTransportProtocol? protocol, DnsServerResponseType? responseType, DnsResponseCode? rcode, string qname, DnsResourceRecordType? qtype, DnsClass? qclass)
+        public async Task<DnsLogPage> QueryLogsAsync(long pageNumber, int entriesPerPage, bool descendingOrder, DateTime? start, DateTime? end, IPAddress? clientIpAddress, DnsTransportProtocol? protocol, DnsServerResponseType? responseType, DnsResponseCode? rcode, string? qname, DnsResourceRecordType? qtype, DnsClass? qclass)
         {
             if (pageNumber == 0)
                 pageNumber = 1;
