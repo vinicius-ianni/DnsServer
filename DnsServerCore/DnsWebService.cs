@@ -49,6 +49,7 @@ using System.IO.Compression;
 using System.Net;
 using System.Net.Quic;
 using System.Net.Security;
+using System.Net.Sockets;
 using System.Reflection;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
@@ -1766,6 +1767,15 @@ namespace DnsServerCore
                 {
                     ctx.Context.Response.Headers["X-Robots-Tag"] = "noindex, nofollow";
                     ctx.Context.Response.Headers.CacheControl = "no-cache";
+                    ctx.Context.Response.Headers.XFrameOptions = "DENY";
+                    ctx.Context.Response.Headers.XContentTypeOptions = "nosniff";
+                    ctx.Context.Response.Headers["Referrer-Policy"] = "same-origin";
+                    ctx.Context.Response.Headers.ContentSecurityPolicy =
+                        "default-src 'self'; " +
+                        "script-src 'self' 'unsafe-inline' 'unsafe-eval'; " +
+                        "style-src 'self' 'unsafe-inline'; " +
+                        "img-src 'self' data:; " +
+                        "frame-ancestors 'none';";
                 },
                 ServeUnknownFileTypes = true
             });
@@ -2587,7 +2597,12 @@ namespace DnsServerCore
         private static void ValidateQuicSupport(string protocolName = "DNS-over-QUIC")
         {
             if (!QuicConnection.IsSupported)
-                throw new DnsWebServiceException(protocolName + " is supported only on Windows 11, Windows Server 2022, and Linux. On Linux, you must install 'libmsquic' manually.");
+            {
+                if (!Socket.OSSupportsIPv6)
+                    throw new DnsWebServiceException(protocolName + " requires IPv6 enabled on the system to work.");
+
+                throw new DnsWebServiceException(protocolName + " is supported only on Windows 11 (build 22000 and later), Windows Server 2022 (and later), and Linux. On Linux, you must install 'libmsquic' manually.");
+            }
         }
 
         private static bool IsQuicSupported()
