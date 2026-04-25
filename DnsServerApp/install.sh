@@ -183,7 +183,7 @@ then
     systemctl restart dns.service >> $installLog 2>&1
 else
     mkdir -p $dnsLog
-	
+    
     echo "Configuring user and permissions..."
     useradd --system -M --shell /usr/sbin/nologin $serviceUser >> $installLog 2>&1
     chown -R $serviceUser:$serviceUser $dnsDir $dnsConfig $dnsLog >> $installLog 2>&1
